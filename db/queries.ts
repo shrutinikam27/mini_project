@@ -1,5 +1,4 @@
 import { cache } from "react";
-
 import { auth } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 
