@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
 import db from "./drizzle";
@@ -21,7 +21,7 @@ export const getCourses = cache(async () => {
 });
 
 export const getUserProgress = cache(async () => {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     if (!userId) return null;
 
@@ -36,7 +36,7 @@ export const getUserProgress = cache(async () => {
 });
 
 export const getUnits = cache(async () => {
-    const { userId } = auth();
+    const { userId } = await auth();
     const userProgress = await getUserProgress();
 
     if (!userId || !userProgress?.activeCourseId) return [];

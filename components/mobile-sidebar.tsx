@@ -4,6 +4,7 @@ import {
 } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/sidebar";
 import { Menu } from "lucide-react";
+
 export const MobileSidebar = () => {
     return (
         <Sheet>
@@ -15,4 +16,4 @@ export const MobileSidebar = () => {
             </SheetContent>
         </Sheet>
     );
-}         
+}

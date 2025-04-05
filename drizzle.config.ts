@@ -16,4 +16,5 @@ export default defineConfig({
         database: new URL(process.env.DATABASE_URL!).pathname.slice(1),
         ssl: true
     },
+
 });
