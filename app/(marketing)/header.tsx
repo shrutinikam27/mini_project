@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, SignInButton, UserButton, SignOutButton } from "@clerk/nextjs";
-import { Import, Loader } from "lucide-react";
+import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Header = () => {
@@ -12,7 +12,6 @@ export const Header = () => {
                     <h1 className="text-2xl font-extrabold text-pink-500 tracking-wide uppercase">
                         Era
                     </h1>
-
                 </div>
                 <ClerkLoading>
                     <Loader className="h-5 w-5 text-muted-foreground animate-spin" />
@@ -22,9 +21,8 @@ export const Header = () => {
                         <UserButton afterSignOutUrl="/" />
                     </SignedIn>
                     <SignedOut>
-                        <SignInButton mode="modal" afterSignInUrl="/learn"
-                            afterSignUpUrl="/learn">
-                            <Button size="lg" variant="ghost" >Login</Button>
+                        <SignInButton>
+                            <Button size="lg" variant="ghost">Login</Button>
                         </SignInButton>
                     </SignedOut>
                 </ClerkLoaded>
