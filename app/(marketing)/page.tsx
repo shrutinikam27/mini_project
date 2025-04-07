@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "components/ui/button";
 import { Loader } from "lucide-react";
 import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, SignUpButton, SignInButton } from "@clerk/nextjs";
 import Image from "next/image";
@@ -20,21 +20,19 @@ export default function Home() {
           </ClerkLoading>
           <ClerkLoaded>
             <SignedOut>
-              <SignUpButton mode="modal" afterSignInUrl="/learn" afterSignUpUrl="/learn">
+              <SignUpButton>
                 <Button size="lg" className="w-full bg-pink-500 text-white hover:bg-pink-600">
                   Get Started
                 </Button>
               </SignUpButton>
-              <SignInButton mode="modal" afterSignInUrl="/learn" afterSignUpUrl="/learn" asChild>
+              <SignInButton>
                 <Button
                   size="lg"
                   variant="ghost"
-                  className="w-full text-blue-500  p-0 outline-none ring-0 focus:ring-0 
-                  ">
+                  className="w-full text-blue-500 p-0 outline-none ring-0 focus:ring-0">
                   I already have an account
                 </Button>
               </SignInButton>
-
             </SignedOut>
             <SignedIn>
               <Button size="lg" variant="secondary" className="w-full bg-pink-500" asChild>
