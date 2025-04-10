@@ -6,7 +6,12 @@ import { Header } from "./header";
 import { getUserProgress } from "db/queries";
 
 const LearnPage = async () => {
-    const userProgress = await getUserProgress();
+    const userProgressData = await getUserProgress();
+    const [userProgress] = await Promise.all([
+        userProgressData
+    ]);
+
+
 
     if (!userProgress || !userProgress.activeCourse) {
         redirect("/courses");

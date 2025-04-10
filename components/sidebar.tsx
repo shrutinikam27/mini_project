@@ -24,7 +24,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
                     <Image src="/logo1.png" alt="Mascot" height={40} width={40} />
 
                     <h1 className="text-2xl font-extrabold tracking-wide text-pink-500">
-                        Lingo
+                        Era
                     </h1>
                 </div>
             </Link>

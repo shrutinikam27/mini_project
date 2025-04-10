@@ -8,6 +8,7 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
+import { Toaster } from "components/ui/sonner";
 import "./globals.css";
 
 const font = Nunito({
@@ -35,6 +36,7 @@ export default function RootLayout({
         <body
           className={font.className}
         >
+          <Toaster />
           {children}
         </body>
       </html>
