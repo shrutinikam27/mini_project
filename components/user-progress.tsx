@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { Button } from "components/ui/button";
+import { courses } from "db/schema";
 import Image from "next/image"
 import { InfinityIcon, Infinity } from 'lucide-react';
 
 type Props = {
-    activeCourse: { imageSrc: string; title: string };
+    activeCourse: typeof courses.$inferSelect;
     hearts: number;
     points: number;
     hasActiveSubscription: boolean;
