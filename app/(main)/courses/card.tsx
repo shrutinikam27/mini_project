@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "lib/utils";
 
 type Props = {
     title: string;

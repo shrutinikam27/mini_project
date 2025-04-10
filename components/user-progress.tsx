@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
+import { Button } from "components/ui/button";
 import Image from "next/image"
 import { InfinityIcon, Infinity } from 'lucide-react';
 

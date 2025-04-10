@@ -3,7 +3,7 @@ import { Loader } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { cn } from "@/lib/utils";
+import { cn } from "lib/utils";
 
 import { SidebarItem } from "./sidebar-item";
 

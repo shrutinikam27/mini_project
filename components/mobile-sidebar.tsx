@@ -1,8 +1,8 @@
 import { fromTheme } from "tailwind-merge";
 import {
     Sheet, SheetContent, SheetTrigger
-} from "@/components/ui/sheet";
-import { Sidebar } from "@/components/sidebar";
+} from "components/ui/sheet";
+import { Sidebar } from "components/sidebar";
 import { Menu } from "lucide-react";
 
 export const MobileSidebar = () => {
