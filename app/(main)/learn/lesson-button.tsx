@@ -1,19 +1,15 @@
 "use client";
 
 import { Check, Crown, Star } from "lucide-react";
-import Link from "next/link";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
 import "react-circular-progressbar/dist/styles.css";
 
 type LessonButtonProps = {
     id: number;
     index: number;
     totalCount: number;
-    locked?: boolean;
     current?: boolean;
     percentage: number;
 };
@@ -68,33 +64,6 @@ export const LessonButton = ({
                                 aria-hidden
                             />
                         </div>
-                        <CircularProgressbarWithChildren
-                            value={Number.isNaN(percentage) ? 0 : percentage}
-                            styles={{
-                                path: {
-                                    stroke: "#4ade80",
-                                },
-                                trail: {
-                                    stroke: "#e5e7eb",
-                                },
-                            }}
-                        >
-                            <Button
-                                size="rounded"
-                                variant={locked ? "locked" : "secondary"}
-                                className="h-[70px] w-[70px] border-b-8"
-                            >
-                                <Icon
-                                    className={cn(
-                                        "h-10 w-10",
-                                        locked
-                                            ? "fill-neutral-400 stroke-neutral-400 text-neutral-400"
-                                            : "fill-primary-foreground text-primary-foreground",
-                                        isCompleted && "fill-none stroke-[4]"
-                                    )}
-                                />
-                            </Button>
-                        </CircularProgressbarWithChildren>
                     </div>
                 ) : (
                     <Button
