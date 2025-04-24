@@ -1,5 +1,5 @@
 import { InfinityIcon, X } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { progress as Progress } from "components/ui/progress";
 import Image from "next/image";
 
 type Props = {
@@ -29,5 +29,4 @@ export const Header = ({ hearts, percentage, hasActiveSubscription }: Props) => 
             </div>
         </header>
     );
-
 };
