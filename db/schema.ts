@@ -18,11 +18,9 @@ export const units = pgTable("units", {
     description: text("description").notNull(),
     courseId: integer("course_id").references(() => courses.id, { onDelete: "cascade" }).notNull(),
     order: integer("order").notNull(),
-}, (table) => {
-    return {
-        courseIdx: index("course_idx").on(table.courseId),
-    };
-});
+}, (table) => ({
+    courseIdx: index("course_idx").on(table.courseId),
+}));
 
 export const unitsRelations = relations(units, ({ many, one }) => ({
     courses: one(courses, {
@@ -37,11 +35,9 @@ export const lessons = pgTable("lessons", {
     title: text("title").notNull(),
     unitId: integer("unit_id").references(() => units.id, { onDelete: "cascade" }).notNull(),
     order: integer("order").notNull(),
-}, (table) => {
-    return {
-        unitIdx: index("unit_idx").on(table.unitId),
-    };
-});
+}, (table) => ({
+    unitIdx: index("unit_idx").on(table.unitId),
+}));
 
 export const lessonsRelations = relations(lessons, ({ many, one }) => ({
     unit: one(units, {
@@ -53,17 +49,19 @@ export const lessonsRelations = relations(lessons, ({ many, one }) => ({
 
 export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
 
-export const challenges = pgTable("challenges", {
-    id: serial("id").primaryKey(),
-    lessonId: integer("lesson_id").references(() => lessons.id, { onDelete: "cascade" }).notNull(),
-    type: challengesEnum("type").notNull(),
-    question: text("question").notNull(),
-    order: integer("order").notNull(),
-}, (table) => {
-    return {
+export const challenges = pgTable(
+    "challenges",
+    {
+        id: serial("id").primaryKey(),
+        lessonId: integer("lesson_id").references(() => lessons.id, { onDelete: "cascade" }).notNull(),
+        type: challengesEnum("type").notNull(),
+        question: text("question").notNull(),
+        order: integer("order").notNull(),
+    },
+    (table) => ({
         lessonIdx: index("lesson_idx").on(table.lessonId),
-    };
-});
+    })
+);
 
 export const challengesRelations = relations(challenges, ({ many, one }) => ({
     lesson: one(lessons, {
@@ -74,7 +72,7 @@ export const challengesRelations = relations(challenges, ({ many, one }) => ({
     challengeProgress: many(challengeProgress),
 }));
 
-export const challengeOptions = pgTable("challenge_Options", {
+export const challengeOptions = pgTable("challenge_options", {
     id: serial("id").primaryKey(),
     challengeId: integer("challenge_id").references(() => challenges.id, { onDelete: "cascade" }).notNull(),
     text: text("text").notNull(),
@@ -90,18 +88,20 @@ export const challengeOptionsRelations = relations(challengeOptions, ({ one }) =
     }),
 }));
 
-export const challengeProgress = pgTable("challenge_Progress", {
-    id: serial("id").primaryKey(),
-    userId: text("user_id"),
-    challengeId: integer("challenge_id").references(() => challenges.id, { onDelete: "cascade" }).notNull(),
-    completed: boolean("completed").notNull().default(false),
-}, (table) => {
-    return {
+export const challengeProgress = pgTable(
+    "challenge_progress",
+    {
+        id: serial("id").primaryKey(),
+        userId: text("user_id"),
+        challengeId: integer("challenge_id").references(() => challenges.id, { onDelete: "cascade" }).notNull(),
+        completed: boolean("completed").notNull().default(false),
+    },
+    (table) => ({
         userIdx: index("user_idx").on(table.userId),
         challengeIdx: index("challenge_idx").on(table.challengeId),
         userChallengeIdx: index("user_challenge_idx").on(table.userId, table.challengeId),
-    };
-});
+    })
+);
 
 export const challengeProgressRelations = relations(challengeProgress, ({ one }) => ({
     challenge: one(challenges, {

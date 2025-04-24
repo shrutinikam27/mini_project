@@ -21,15 +21,15 @@ export default function Home() {
           <ClerkLoaded>
             <SignedOut>
               <SignUpButton>
-                <Button size="lg" className="w-full bg-pink-500 text-white hover:bg-pink-600">
+                <Button size="lg" variant="getStarted" className="w-full">
                   Get Started
                 </Button>
               </SignUpButton>
               <SignInButton>
                 <Button
                   size="lg"
-                  variant="ghost"
-                  className="w-full text-blue-500 p-0 outline-none ring-0 focus:ring-0">
+                  variant="blueGhost"
+                  className="w-full p-0 outline-none ring-0 focus:ring-0">
                   I already have an account
                 </Button>
               </SignInButton>

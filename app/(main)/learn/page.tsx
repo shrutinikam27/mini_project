@@ -3,21 +3,33 @@ import { FeedWrapper } from "components/feed-wrapper";
 import { StickyWrapper } from "components/sticky-wrapper";
 import { UserProgress } from "components/user-progress";
 import { Header } from "./header";
-import { getUserProgress, getUnits } from "db/queries";
-import { UnitBanner } from "./unit-banner";
+
+import { getUserProgress, getUnits, getLessonPercentage, getUserProgressWithActiveLesson, getCourseProgress } from "db/queries";
+
+import { Unit } from "./unit";
+
 
 const LearnPage = async () => {
-    const userProgressData = await getUserProgress();
+    const userProgressData = getUserProgress();
+    const courseProgressData = getCourseProgress();
+    const lessonPercentageData = getLessonPercentage();
     const unitsData = getUnits();
-    const [userProgress, units] = await Promise.all([
-        userProgressData, unitsData,
+
+    const [userProgress, units, courseProgress, lessonPercentage] = await Promise.all([
+        userProgressData,
+        unitsData,
+        courseProgressData,
+        lessonPercentageData,
     ]);
 
+    if (!userProgress || !userProgress?.activeCourse) {
+        await redirect("/courses");
+        return;
+    }
 
-
-    if (!userProgress || !userProgress.activeCourse) {
-        redirect("/courses");
-
+    if (!courseProgress) {
+        await redirect("/courses");
+        return;
     }
 
     return (
@@ -32,12 +44,16 @@ const LearnPage = async () => {
             </StickyWrapper>
             <FeedWrapper>
                 <Header title={userProgress.activeCourse.title} />
-                {units.map((unit) => (
+                {units.map((unit: any) => (
                     <div key={unit.id} className="mb-10">
-
-                        <UnitBanner
+                        <Unit
+                            id={unit.id}
+                            order={unit.order}
                             title={unit.title}
                             description={unit.description}
+                            lessons={unit.lessons}
+                            activeLesson={courseProgress.activeLesson}
+                            activeLessonPercentage={lessonPercentage}
                         />
 
                     </div>
@@ -45,6 +61,6 @@ const LearnPage = async () => {
             </FeedWrapper>
         </div>
     );
-}
-
+};
 export default LearnPage;
+
