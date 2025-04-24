@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { courses, userProgress } from "../../../db/schema";
-import { Card } from "./card";
+import { Card } from "../../lesson/card";
 import { useTransition } from "react";
 import { upsertUserProgress } from "actions/user-progress";
 import { toast } from "sonner";

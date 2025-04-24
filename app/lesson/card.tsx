@@ -1,6 +1,9 @@
 import Image from "next/image";
 import { Check } from "lucide-react";
 import { cn } from "lib/utils";
+import { constants } from "buffer";
+import { useCallback } from "node_modules/@types/react";
+import { useAudio, useKey } from "react-use";
 
 type Props = {
     title: string;
@@ -13,6 +16,17 @@ type Props = {
 
 export const Card = ({
     title, id, imageSrc, onClick, disabled, active }: Props) => {
+        const[audio,_, controls] = useAudio({src: audioSrc || ""});
+
+    const handelclick = useCallback (()=> { 
+        if (disabled) return;
+        
+        controls.play();
+        onClick();     
+    },[disabled , onClick , controls ]);
+
+    useKey(shortcut)
+    
     return (
         <div
             onClick={() => onClick(id)}
@@ -28,6 +42,7 @@ export const Card = ({
                     </div>
                 )}
             </div>
+            {audio}
             <Image
                 src={imageSrc}
                 alt={title}
