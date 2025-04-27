@@ -1,10 +1,22 @@
 import { auth } from "@clerk/nextjs";
 
-export const getIsAdmin = () => {
-  const { userId } = auth();
-  const adminIds = process.env.CLERK_ADMIN_IDS!.split(", "); // stored in .env.local file as string separated by comma(,) and space( )
+export const getIsAdmin = async () => {
+  try {
+    const { userId } = await auth();
 
-  if (!userId) return false;
+    if (!userId) return false;
 
-  return adminIds.indexOf(userId) !== -1;
+    const adminIdsEnv = process.env.CLERK_ADMIN_IDS;
+    if (!adminIdsEnv) {
+      console.error("CLERK_ADMIN_IDS environment variable is not set");
+      return false;
+    }
+
+    const adminIds = adminIdsEnv.split(", ");
+
+    return adminIds.includes(userId);
+  } catch (error) {
+    console.error("Error in getIsAdmin:", error);
+    return false;
+  }
 };

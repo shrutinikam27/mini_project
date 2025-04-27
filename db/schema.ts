@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+ import { relations } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, serial, text, timestamp, index } from "drizzle-orm/pg-core";
 
 export const courses = pgTable("courses", {
