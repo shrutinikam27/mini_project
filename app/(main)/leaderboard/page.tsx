@@ -1,18 +1,18 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-import { FeedWrapper } from "@/components/feed-wrapper";
-import { Promo } from "@/components/promo";
-import { Quests } from "@/components/quests";
-import { StickyWrapper } from "@/components/sticky-wrapper";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { UserProgress } from "@/components/user-progress";
+import { FeedWrapper } from "components/feed-wrapper";
+import { Promo } from "components/promo";
+import { Quests } from "components/quests";
+import { StickyWrapper } from "components/sticky-wrapper";
+import { Avatar, AvatarImage } from "components/ui/avatar";
+import { Separator } from "components/ui/separator";
+import { UserProgress } from "components/user-progress";
 import {
     getTopTenUsers,
     getUserProgress,
     getUserSubscription,
-} from "@/db/queries";
+} from "db/queries";
 
 const LeaderboardPage = async () => {
     const userProgressData = getUserProgress();
@@ -27,7 +27,10 @@ const LeaderboardPage = async () => {
 
     if (!userProgress || !userProgress.activeCourse) redirect("/courses");
 
-    const isPro = !!userSubscription?.isActive;
+    // Determine if subscription is active based on stripeCurrentPeriodEnd date
+    const isPro = userSubscription?.stripeCurrentPeriodEnd
+        ? new Date(userSubscription.stripeCurrentPeriodEnd) > new Date()
+        : false;
 
     return (
         <div className="flex flex-row-reverse gap-[48px] px-6">
@@ -59,26 +62,30 @@ const LeaderboardPage = async () => {
                     </p>
 
                     <Separator className="mb-4 h-0.5 rounded-full" />
-                    {leaderboard.map((userProgress, i) => (
-                        <div
-                            key={userProgress.userId}
-                            className="flex w-full items-center rounded-xl p-2 px-4 hover:bg-gray-200/50"
-                        >
-                            <p className="mr-4 font-bold text-lime-700">{i + 1}</p>
+                    {leaderboard.length === 0 ? (
+                        <p className="text-muted-foreground">No users found on the leaderboard.</p>
+                    ) : (
+                        leaderboard.map((leaderboardUser, i) => (
+                            <div
+                                key={leaderboardUser.userId}
+                                className="flex w-full items-center rounded-xl p-2 px-4 hover:bg-gray-200/50"
+                            >
+                                <p className="mr-4 font-bold text-lime-700">{i + 1}</p>
 
-                            <Avatar className="ml-3 mr-6 h-12 w-12 border bg-green-500">
-                                <AvatarImage
-                                    src={userProgress.userImageSrc}
-                                    className="object-cover"
-                                />
-                            </Avatar>
+                                <Avatar className="ml-3 mr-6 h-12 w-12 border bg-green-500">
+                                    <AvatarImage
+                                        src={leaderboardUser.userImageSrc}
+                                        className="object-cover"
+                                    />
+                                </Avatar>
 
-                            <p className="flex-1 font-bold text-neutral-800">
-                                {userProgress.userName}
-                            </p>
-                            <p className="text-muted-foreground">{userProgress.points} XP</p>
-                        </div>
-                    ))}
+                                <p className="flex-1 font-bold text-neutral-800">
+                                    {leaderboardUser.userName}
+                                </p>
+                                <p className="text-muted-foreground">{leaderboardUser.points} XP</p>
+                            </div>
+                        ))
+                    )}
                 </div>
             </FeedWrapper>
         </div>
@@ -86,3 +93,4 @@ const LeaderboardPage = async () => {
 };
 
 export default LeaderboardPage;
+

@@ -3,10 +3,15 @@ import { Header } from "./header";
 import { challengeOptions, challenges } from "db/schema";
 import { toast } from "sonner";
 import { Challenge } from "./challenge";
-import { useState, useTransition } from "react";
+import { useAudio } from "react-use";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { QuestionBubble } from "./question-bubble";
 import { Footer } from "./footer";
 import { upsertChallengeProgress } from "actions/challenge-progress";
+import { reduceHearts } from "actions/user-progress";
+import Image from "next/image";
+import { ResultCard } from "./result-card";
 
 type Props = {
     initialPercentage: number;
@@ -26,6 +31,18 @@ export const Quiz = ({
     initialLessonChallenges,
     userSubscription,
 }: Props) => {
+    const router = useRouter();
+    const [
+        correctAudio,
+        _c,
+        correctControls,
+    ] = useAudio({ src: "/correct.wav" })
+
+    const [
+        incorrectAudio,
+        _i,
+        incorrectControls,
+    ] = useAudio({ src: "/incorrect.wav" })
     const [pending, startTransition] = useTransition();
 
 
@@ -48,6 +65,13 @@ export const Quiz = ({
         setActiveIndex((current) => current + 1);
 
     };
+
+    // Redirect to courses page when quiz is completed
+    useEffect(() => {
+        if (activeIndex >= challenges.length) {
+            router.push("/courses");
+        }
+    }, [activeIndex, challenges.length, router]);
 
 
     const onSelect = (id: number) => {
@@ -77,7 +101,7 @@ export const Quiz = ({
             return;
         }
 
-        if (correctOption && correctOption.id === selectedOption) {
+        if (correctOption.id === selectedOption) {
             startTransition(() => {
                 upsertChallengeProgress(challenge.id)
                     .then((response) => {
@@ -85,6 +109,9 @@ export const Quiz = ({
                             console.error("missing hearts");
                             return;
                         }
+
+                        correctControls.play();
+
 
                         setStatus("correct");
                         setPercentage((prev) => prev + 100 / challenges.length);
@@ -97,11 +124,56 @@ export const Quiz = ({
                         }
                     })
                     .catch(() => toast.error("something went wrong, please try again."))
-            })
+            });
         } else {
-            console.log("incorrect option!");
+            startTransition(() => {
+                reduceHearts(challenge.id)
+                    .then((response) => {
+                        if (response?.error === "hearts") {
+                            console.log("Missing Hearts");
+                            return;
+                        }
+                        incorrectControls.play();
+                        setStatus("wrong");
+
+                        if (!response?.error) {
+                            setHearts((prev) => Math.max(prev - 1, 0));
+                        }
+                    })
+                    .catch(() => toast.error("Something went wrong.please try again."))
+            })
         }
     };
+
+    //todo:remove true
+    if (true || !challenge) {
+        return (
+            <>
+                <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center items-center justify-center h-full">
+                    <Image src="/finish.svg"
+                        alt="FINISH"
+                        className="block lg:hidden"
+                        height={50}
+                        width={50}
+                    />
+                    <h1 className="text-xl lg:text-3xl font-bold text-neutral-700">
+                        Great job! <br />You've completed the lesson.
+                    </h1>
+                    <div className="flex items-center gap-x-4 w-full">
+                        <ResultCard
+                            variant="points"
+                            value={challenges.length * 10} />
+
+                        <ResultCard
+                            variant="hearts"
+                            value={hearts} />
+                    </div>
+                </div>
+
+
+            </>
+        );
+    }
 
     const title =
         challenge.type === "ASSIST"
@@ -110,6 +182,8 @@ export const Quiz = ({
 
     return (
         <>
+            {incorrectAudio}
+            {correctAudio}
             <Header
                 hearts={hearts}
                 percentage={percentage}
@@ -125,7 +199,18 @@ export const Quiz = ({
                         </h1>
                         <div>
                             {challenge.type === "ASSIST" && (
-                                <QuestionBubble question={challenge.question} />
+                                <>
+                                    <QuestionBubble question={challenge.question} />
+                                    <div className="flex justify-center mb-4">
+                                        <Image
+                                            src="/el-robot.png"
+                                            alt="el-robot"
+                                            width={120}
+                                            height={120}
+                                            priority
+                                        />
+                                    </div>
+                                </>
                             )}
                             <Challenge
                                 options={options}
@@ -141,7 +226,7 @@ export const Quiz = ({
             </div>
 
             <Footer
-                disabled={!selectedOption}
+                disabled={pending || !selectedOption}
                 status={status}
                 onCheck={onContinue}
             />

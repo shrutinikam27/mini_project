@@ -35,7 +35,8 @@ const Card = ({
     type,
     audioSrc = null,
 }: Props) => {
-    const [audio, _, controls] = useAudio({ src: audioSrc || "" });
+    const hasAudio = audioSrc && audioSrc.trim() !== "";
+    const [audio, _, controls] = hasAudio ? useAudio({ src: audioSrc }) : [null, null, { play: () => { } }];
 
     const handleClick = useCallback(() => {
         if (disabled) return;
@@ -49,24 +50,26 @@ const Card = ({
         <div
             onClick={handleClick}
             className={cn(
-                "h-full border-2 rounded-xl border-b-4 p-5 lg:p-7 cursor-pointer active:border-b-2 transition-colors",
+                "h-full border-2 rounded-xl border-b-4 p-3 lg:p-4 cursor-pointer active:border-b-2 transition-colors",
                 "hover:bg-black/5",
                 selected && "border-sky-300 bg-sky-100 hover:bg-sky-100",
                 selected && status === "correct" && "border-pink-300 bg-pink-100 hover:bg-pink-100",
                 selected && status === "wrong" && "border-rose-300 bg-rose-100 hover:bg-rose-100",
                 disabled && "pointer-events-none hover:bg-white",
-                type === "ASSIST" && "lg:p-4 w-full"
+                type === "ASSIST" && "w-full max-w-[400px]"
             )}
         >
             {audio}
-            {imageSrc ? (
+            {type !== "ASSIST" && imageSrc && imageSrc.trim() !== "" ? (
                 <div className="relative aspect-square mb-5 max-h-[160px] w-full">
                     <Image src={imageSrc} alt={text} fill sizes="(max-width: 1024px) 100vw, 424px" style={{ objectFit: "cover" }} />
                 </div>
             ) : (
-                <div className="mb-5 h-40 w-full rounded-md bg-gray-200 flex items-center justify-center text-gray-400">
-                    No Image
-                </div>
+                type !== "ASSIST" && (
+                    <div className="mb-5 h-40 w-full rounded-md bg-gray-200 flex items-center justify-center text-gray-400">
+                        No Image
+                    </div>
+                )
             )}
 
             <div className={cn("flex items-center justify-between", type === "ASSIST" && "flex-row-reverse")}>
