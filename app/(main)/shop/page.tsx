@@ -29,7 +29,7 @@ const ShopPage = async () => {
                     activeCourse={userProgress.activeCourse}
                     hearts={userProgress.hearts}
                     points={userProgress.points}
-                    hasActiveSubscription={isPro}
+                    hasActiveSubscription={false9}
                 />
 
                 <Quests points={userProgress.points} />
@@ -49,7 +49,7 @@ const ShopPage = async () => {
                     <Items
                         hearts={userProgress.hearts}
                         points={userProgress.points}
-                        hasActiveSubscription={isPro}
+                        hasActiveSubscription={false}
                     />
                 </div>
             </FeedWrapper>
