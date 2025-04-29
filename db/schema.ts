@@ -1,4 +1,4 @@
- import { relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, serial, text, timestamp, index } from "drizzle-orm/pg-core";
 
 export const courses = pgTable("courses", {
@@ -121,9 +121,11 @@ export const userProgress = pgTable("user_progress", {
 
 export const userSubscription = pgTable("user_subscription", {
     id: serial("id").primaryKey(),
-    userId: text("user_id").notNull(),
-    stripePriceId: text("stripe_price_id"),
-    stripeCurrentPeriodEnd: timestamp("stripe_current_period_end"),
+    userId: text("user_id").notNull().unique(),
+    stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+    stripeSubscriptionId: text("stripe_subscription_id"),
+    stripePriceId: text("stripe_price_id").notNull(),
+    stripeCurrentPeriodEnd: timestamp("stripe_current_period_end").notNull(),
 });
 
 export const userProgressRelations = relations(userProgress, ({ one }) => ({
@@ -132,12 +134,3 @@ export const userProgressRelations = relations(userProgress, ({ one }) => ({
         references: [courses.id],
     }),
 }));
-
-export const userSubscription = pgTable("user_subscription",) {
-    id: serial("id").primaryKey(),
-    userId: text("user_id").notNull().unique(),
-    stripeCustomerId : text(stripe_customer_id).notNull().unique(),
-    stripeSubscriptionId: text("Stripe_Subscription_id")
-    stripePriceId :text ("stripe_price_id").notNull,
-    stripeCurrentPeriodEnd : timestamp("stripe_current_period_end").notNull(),
-});

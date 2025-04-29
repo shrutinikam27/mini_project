@@ -1,3 +1,5 @@
+"use client";
+
 import { useKey, useMedia } from "react-use";
 import { CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,7 +9,7 @@ type Props = {
     onCheck: () => void;
     status: "correct" | "wrong" | "none" | "completed"; // ✅ added "completed"
     disabled?: boolean;
-    lessonId?: boolean;
+    lessonId?: number;
 };
 
 export const Footer = ({
@@ -43,7 +45,7 @@ export const Footer = ({
                 )}
                 {status === "completed" && (
                     <Button variant="default" size={isMobile ? "sm" : "lg"}
-                        onClick={() => window.location.href = '/lesson/${lessonId}'} >
+                        onClick={() => window.location.href = `/lesson/${lessonId}`} >
                         Practice again.
                     </Button>
                 )}
