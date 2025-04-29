@@ -1,5 +1,5 @@
 import { challengeOptions, challenges } from "db/schema";
-import { Card } from "./card";
+import Card from "./card";
 import { cn } from "lib/utils";
 
 type Props = {

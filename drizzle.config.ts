@@ -2,7 +2,8 @@ import { defineConfig } from 'drizzle-kit';
 import { neonConfig } from '@neondatabase/serverless';
 
 // Configure connection pooling
-neonConfig.fetchConnectionCache = true;
+// Temporarily disable connection pooling to test if it affects fetch failure
+neonConfig.fetchConnectionCache = false;
 
 export default defineConfig({
     schema: './db/schema.ts',
