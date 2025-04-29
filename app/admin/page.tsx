@@ -8,7 +8,7 @@ const AdminPage = () => {
     return (
         <App />
     );
-};
+}; 
 
 
 export default AdminPage;    
