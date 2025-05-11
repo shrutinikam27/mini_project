@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { QUESTS } from "@/constants";
+import { Button } from "components/ui/button";
+import { progress as Progress } from "components/ui/progress";
+import { QUESTS } from "constants";
 
 type QuestsProps = { points: number };
 
@@ -21,7 +21,7 @@ export const Quests = ({ points }: QuestsProps) => {
             </div>
 
             <ul className="w-full space-y-4">
-                {QUESTS.map((quest) => {
+                {QUESTS.map((quest: { title: string; value: number }) => {
                     const progress = (points / quest.value) * 100;
 
                     return (

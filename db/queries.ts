@@ -266,4 +266,3 @@ export const getTopTenUsers = cache(async () => {
         points: up.points,
     }));
 });
-

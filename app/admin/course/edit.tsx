@@ -1,14 +1,13 @@
-import { Edit, required, SimpleForm ,  TextInput } from "react-admin";
-,
+import { Edit, required, SimpleForm, TextInput } from "react-admin";
 
 export const CourseEdit = () => {
-    return(
-    <Edit>
-        <SimpleForm >
-            <TextInput source="id" Validate={[required()]} label="id"/>
-            <TextInput source="imageSrc" Validate={[required()]} label="Image"/>
-            <TextInput source="title" Validate={[required()]} label="Title"/>
-        </SimpleForm>        
-     </Edit>
+    return (
+        <Edit resource="courses">
+            <SimpleForm >
+                <TextInput source="id" validate={[required()]} label="id" />
+                <TextInput source="imageSrc" validate={[required()]} label="Image" />
+                <TextInput source="title" validate={[required()]} label="Title" />
+            </SimpleForm>
+        </Edit>
     )
 };
