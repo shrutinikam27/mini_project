@@ -63,4 +63,3 @@ const LearnPage = async () => {
     );
 };
 export default LearnPage;
-

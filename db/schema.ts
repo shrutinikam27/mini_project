@@ -134,3 +134,22 @@ export const userProgressRelations = relations(userProgress, ({ one }) => ({
         references: [courses.id],
     }),
 }));
+
+export const userLessonProgress = pgTable(
+    "user_lesson_progress",
+    {
+        userId: text("user_id"),
+        lessonId: integer("lesson_id").references(() => lessons.id, { onDelete: "cascade" }).notNull(),
+        completed: boolean("completed").notNull().default(false),
+    },
+    (table) => ({
+        userLessonIdx: index("user_lesson_idx").on(table.userId, table.lessonId),
+    })
+);
+
+export const userLessonProgressRelations = relations(userLessonProgress, ({ one }) => ({
+    lesson: one(lessons, {
+        fields: [userLessonProgress.lessonId],
+        references: [lessons.id],
+    }),
+}));

@@ -3,11 +3,15 @@ import Link from "next/link";
 
 import { Button } from "components/ui/button";
 import { progress as Progress } from "components/ui/progress";
-import { QUESTS } from "constants";
+import { QUESTS } from "../constants";
 
 type QuestsProps = { points: number };
 
 export const Quests = ({ points }: QuestsProps) => {
+    // Defensive checks for QUESTS and points
+    const questsArray = Array.isArray(QUESTS) ? QUESTS : [];
+    const safePoints = typeof points === "number" ? points : 0;
+
     return (
         <div className="space-y-4 rounded-xl border-2 p-4">
             <div className="flex w-full items-center justify-between space-y-2">
@@ -21,8 +25,8 @@ export const Quests = ({ points }: QuestsProps) => {
             </div>
 
             <ul className="w-full space-y-4">
-                {QUESTS.map((quest: { title: string; value: number }) => {
-                    const progress = (points / quest.value) * 100;
+                {questsArray.map((quest: { title: string; value: number }) => {
+                    const progress = (safePoints / quest.value) * 100;
 
                     return (
                         <div

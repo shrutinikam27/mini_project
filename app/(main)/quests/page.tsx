@@ -1,13 +1,13 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-import { FeedWrapper } from "@/components/feed-wrapper";
-import { Promo } from "@/components/promo";
-import { StickyWrapper } from "@/components/sticky-wrapper";
-import { Progress } from "@/components/ui/progress";
-import { UserProgress } from "@/components/user-progress";
-import { QUESTS } from "@/constants";
-import { getUserProgress, getUserSubscription } from "@/db/queries";
+import { FeedWrapper } from "components/feed-wrapper";
+import { Promo } from "components/promo";
+import { StickyWrapper } from "components/sticky-wrapper";
+import { progress as Progress } from "components/ui/progress";
+import { UserProgress } from "components/user-progress";
+import { QUESTS } from "../../../constants";
+import { getUserProgress, getUserSubscription } from "db/queries";
 
 const QuestsPage = async () => {
     const userProgressData = getUserProgress();
@@ -20,7 +20,9 @@ const QuestsPage = async () => {
 
     if (!userProgress || !userProgress.activeCourse) redirect("/courses");
 
-    const isPro = !!userSubscription?.isActive;
+    const isPro = userSubscription?.stripeCurrentPeriodEnd
+        ? new Date(userSubscription.stripeCurrentPeriodEnd) > new Date()
+        : false;
 
     return (
         <div className="flex flex-row-reverse gap-[48px] px-6">
@@ -46,7 +48,7 @@ const QuestsPage = async () => {
                     </p>
 
                     <ul className="w-full">
-                        {QUESTS.map((quest) => {
+                        {QUESTS.map((quest: { title: string; value: number }) => {
                             const progress = (userProgress.points / quest.value) * 100;
 
                             return (
