@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-import { FeedWrapper } from "@/components/feed-wrapper";
-import { Quests } from "@/components/quests";
-import { StickyWrapper } from "@/components/sticky-wrapper";
-import { UserProgress } from "@/components/user-progress";
-import { getUserProgress, getUserSubscription } from "@/db/queries";
+import { FeedWrapper } from "components/feed-wrapper";
+import { Quests } from "components/quests";
+import { StickyWrapper } from "components/sticky-wrapper";
+import { UserProgress } from "components/user-progress";
+import { getUserProgress, getUserSubscription } from "db/queries";
 
 import { Items } from "./items";
 
@@ -20,7 +20,15 @@ const ShopPage = async () => {
 
     if (!userProgress || !userProgress.activeCourse) redirect("/courses");
 
-    const isPro = !!userSubscription?.isActive;
+    // Add isActive property to userSubscription based on stripeCurrentPeriodEnd
+    const userSubscriptionWithIsActive = userSubscription
+        ? {
+            ...userSubscription,
+            isActive: userSubscription.stripeCurrentPeriodEnd > new Date(),
+        }
+        : null;
+
+    const isPro = !!userSubscriptionWithIsActive?.isActive;
 
     return (
         <div className="flex flex-row-reverse gap-[48px] px-6">
@@ -29,7 +37,7 @@ const ShopPage = async () => {
                     activeCourse={userProgress.activeCourse}
                     hearts={userProgress.hearts}
                     points={userProgress.points}
-                    hasActiveSubscription={false}
+                    hasActiveSubscription={isPro}
                 />
 
                 <Quests points={userProgress.points} />
@@ -49,7 +57,7 @@ const ShopPage = async () => {
                     <Items
                         hearts={userProgress.hearts}
                         points={userProgress.points}
-                        hasActiveSubscription={false}
+                        hasActiveSubscription={isPro}
                     />
                 </div>
             </FeedWrapper>

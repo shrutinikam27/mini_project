@@ -59,7 +59,7 @@ const Card = ({
                 type === "ASSIST" && "w-full max-w-[400px]"
             )}
         >
-            {audio}
+            {audio && audio}
             {type !== "ASSIST" && imageSrc && imageSrc.trim() !== "" ? (
                 <div className="relative aspect-square mb-5 max-h-[160px] w-full">
                     <Image src={imageSrc} alt={text} fill sizes="(max-width: 1024px) 100vw, 424px" style={{ objectFit: "cover" }} />

@@ -8,12 +8,13 @@ import Confetti from "react-confetti";
 import { useAudio, useWindowSize, useMount } from "react-use";
 import { toast } from "sonner";
 
-import { upsertChallengeProgress } from "@/actions/challenge-progress";
-import { reduceHearts } from "@/actions/user-progress";
-import { MAX_HEARTS } from "@/constants";
-import { challengeOptions, challenges, userSubscription } from "@/db/schema";
-import { useHeartsModal } from "@/store/use-hearts-modal";
-import { usePracticeModal } from "@/store/use-practice-modal";
+import { upsertChallengeProgress } from "../../actions/challenge-progress";
+import { reduceHearts } from "../../actions/user-progress";
+// Temporarily define MAX_HEARTS here to unblock progress
+const MAX_HEARTS = 5;
+import { challengeOptions, challenges, userSubscription } from "../../db/schema";
+import { useHeartsModal } from "../../store/use-hearts-modal";
+import { usePracticeModal } from "../../store/use-practice-modal";
 
 import { Challenge } from "./challenge";
 import { Footer } from "./footer";
@@ -43,15 +44,13 @@ export const Quiz = ({
     initialLessonChallenges,
     userSubscription,
 }: QuizProps) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [correctAudio, _c, correctControls] = useAudio({ src: "/correct.wav" });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [incorrectAudio, _i, incorrectControls] = useAudio({
+    const [correctAudioElem, correctAudioState, correctControls] = useAudio({ src: "/correct.wav" });
+    const [incorrectAudioElem, incorrectAudioState, incorrectControls] = useAudio({
         src: "/incorrect.wav",
     });
-    const [finishAudio] = useAudio({
+    const [finishAudioElem, finishAudioState, finishControls] = useAudio({
         src: "/finish.mp3",
-        autoPlay: true,
+        autoPlay: false,
     });
     const { width, height } = useWindowSize();
 
@@ -95,7 +94,11 @@ export const Quiz = ({
     };
 
     const onContinue = () => {
-        if (!selectedOption) return;
+        console.log("onContinue called, selectedOption:", selectedOption, "status:", status);
+        if (!selectedOption) {
+            console.log("No option selected, returning early");
+            return;
+        }
 
         if (status === "wrong") {
             setStatus("none");
@@ -110,14 +113,18 @@ export const Quiz = ({
             return;
         }
 
-        const correctOption = options.find((option) => option.correct);
+        const correctOption = options.find((option: any) => option.correct);
 
-        if (!correctOption) return;
+        if (!correctOption) {
+            console.log("No correct option found, returning early");
+            return;
+        }
 
         if (correctOption.id === selectedOption) {
             startTransition(() => {
-                upsertChallengeProgress(challenge.id)
-                    .then((response) => {
+                upsertChallengeProgress(Number(challenge.id))
+                    .then((response: any) => {
+                        console.log("upsertChallengeProgress response:", response);
                         if (response?.error === "hearts") {
                             openHeartsModal();
                             return;
@@ -125,19 +132,23 @@ export const Quiz = ({
 
                         void correctControls.play();
                         setStatus("correct");
-                        setPercentage((prev) => prev + 100 / challenges.length);
+                        setPercentage((prev) => activeIndex * 100 / challenges.length);
 
                         // This is a practice
                         if (initialPercentage === 100) {
                             setHearts((prev) => Math.min(prev + 1, MAX_HEARTS));
                         }
                     })
-                    .catch(() => toast.error("Something went wrong. Please try again."));
+                    .catch((err) => {
+                        console.error("upsertChallengeProgress error:", err);
+                        toast.error("Something went wrong. Please try again.");
+                    });
             });
         } else {
             startTransition(() => {
-                reduceHearts(challenge.id)
-                    .then((response) => {
+                reduceHearts(Number(challenge.id))
+                    .then((response: any) => {
+                        console.log("reduceHearts response:", response);
                         if (response?.error === "hearts") {
                             openHeartsModal();
                             return;
@@ -148,7 +159,10 @@ export const Quiz = ({
 
                         if (!response?.error) setHearts((prev) => Math.max(prev - 1, 0));
                     })
-                    .catch(() => toast.error("Something went wrong. Please try again."));
+                    .catch((err) => {
+                        console.error("reduceHearts error:", err);
+                        toast.error("Something went wrong. Please try again.");
+                    });
             });
         }
     };
@@ -160,18 +174,29 @@ export const Quiz = ({
     }, [challenge, challenges.length, hearts, router, userSubscription?.isActive]);
 
     if (!challenge) {
-        return null;
+        return (
+            <>
+                <Confetti width={width} height={height} />
+                <div className="flex flex-col gap-4">
+                    <ResultCard value={hearts} variant="hearts" />
+                    <ResultCard value={Math.floor(percentage)} variant="points" />
+                </div>
+            </>
+        );
     }
 
     const title =
         challenge.type === "ASSIST"
             ? "Select the correct meaning"
-            : challenge.question;
+            : typeof challenge.question === "string"
+                ? challenge.question
+                : JSON.stringify(challenge.question);
 
     return (
         <>
-            {incorrectAudio}
-            {correctAudio}
+            {correctAudioElem}
+            {incorrectAudioElem}
+            {finishAudioElem}
             <Header
                 hearts={hearts}
                 percentage={percentage}
@@ -187,7 +212,7 @@ export const Quiz = ({
 
                         <div>
                             {challenge.type === "ASSIST" && (
-                                <QuestionBubble question={challenge.question} />
+                                <QuestionBubble question={typeof challenge.question === "string" ? challenge.question : JSON.stringify(challenge.question)} />
                             )}
 
                             <Challenge

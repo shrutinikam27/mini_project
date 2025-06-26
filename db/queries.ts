@@ -5,6 +5,19 @@ import db from "db/drizzle";
 
 import { courses, userProgress, units, challengeProgress, lessons, userSubscription } from "db/schema";
 
+async function retry<T>(fn: () => Promise<T>, retries = 3, delay = 500): Promise<T> {
+    try {
+        return await fn();
+    } catch (error) {
+        if (retries === 0) {
+            throw error;
+        }
+        console.warn(`Retrying due to error: ${error}. Attempts left: ${retries}`);
+        await new Promise(res => setTimeout(res, delay));
+        return retry(fn, retries - 1, delay * 2);
+    }
+}
+
 export const getUserProgressWithActiveLesson = cache(async () => {
     try {
         const { userId } = await auth();
@@ -14,13 +27,13 @@ export const getUserProgressWithActiveLesson = cache(async () => {
         }
 
         // Fetch user progress with active course and active lesson
-        const data = await db.query.userProgress.findFirst({
+        const data = await retry(() => db.query.userProgress.findFirst({
             where: eq(userProgress.userId, userId),
             with: {
                 activeCourse: true,
 
             },
-        });
+        }));
 
         return data;
     } catch (error) {
@@ -37,12 +50,12 @@ export const getUserProgress = cache(async () => {
             return null;
         }
 
-        const data = await db.query.userProgress.findFirst({
+        const data = await retry(() => db.query.userProgress.findFirst({
             where: eq(userProgress.userId, userId),
             with: {
                 activeCourse: true,
             },
-        });
+        }));
         return data;
     } catch (error) {
         console.error("Error in getUserProgress:", error);
@@ -59,8 +72,13 @@ export const getUnits = cache(async () => {
             return [];
         }
 
-        const data = await db.query.units.findMany({
-            where: eq(units.courseId, userProgress.activeCourseId),
+        const courseId = userProgress.activeCourseId;
+        if (courseId === null) {
+            return [];
+        }
+
+        const data = await retry(() => db.query.units.findMany({
+            where: eq(units.courseId, courseId),
             with: {
                 lessons: {
                     with: {
@@ -74,7 +92,7 @@ export const getUnits = cache(async () => {
                     },
                 },
             },
-        });
+        }));
 
         const normalizedData = data.map((unit) => {
             const lessonsWithCompletedStatus = unit.lessons.map((lesson) => {

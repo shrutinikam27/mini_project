@@ -27,6 +27,7 @@ export const Unit = ({
     activeLesson,
     activeLessonPercentage,
 }: Props) => {
+    console.log("Unit component lessons with locked state:", JSON.stringify(lessons, null, 2));
     return (
         <>
             <UnitBanner title={title} description={description} />

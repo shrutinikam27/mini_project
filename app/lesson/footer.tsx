@@ -2,12 +2,12 @@
 
 import { useKey, useMedia } from "react-use";
 import { CheckCircle, XCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { cn } from "lib/utils";
+import { Button } from "components/ui/button";
 
 type Props = {
     onCheck: () => void;
-    status: "correct" | "wrong" | "none" | "completed"; // ✅ added "completed"
+    status: "correct" | "wrong" | "none" | "completed";
     disabled?: boolean;
     lessonId?: number;
 };
@@ -52,7 +52,11 @@ export const Footer = ({
                 )}
                 {status === "completed" && isMounted && (
                     <Button variant="default" size={isMobile ? "sm" : "lg"}
-                        onClick={() => window.location.href = `/lesson/${lessonId}`} >
+                        onClick={() => {
+                            if (typeof window !== "undefined") {
+                                window.location.href = `/lesson/${lessonId}`;
+                            }
+                        }} >
                         Practice again.
                     </Button>
                 )}

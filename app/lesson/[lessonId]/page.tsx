@@ -43,8 +43,7 @@ const LessonIdPage = async ({
             initialHearts={userProgress.hearts}
             initialLessonId={lesson.id}
             initialLessonChallenges={lesson.challenges}
-            userSubscription={userSubscription}
-            nextLessonId={nextLessonId}
+            userSubscription={userSubscription ? { ...userSubscription, isActive: Boolean(userSubscription.stripeSubscriptionId) } : null}
         />
     );
 };

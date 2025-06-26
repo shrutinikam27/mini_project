@@ -2,9 +2,9 @@
 "use server";
 
 import { auth, currentUser, User } from "@clerk/nextjs/server";
-import db from "@/db/drizzle";
+import db from "../db/drizzle";
 import { getCoursesById, getUserProgress } from "db/queries";
-import { userProgress, challengeProgress, challenges } from "@/db/schema";
+import { userProgress, challengeProgress, challenges } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -96,11 +96,13 @@ export const reduceHearts = async (challengeId: number) => {
 
     }).where(eq(userProgress.userId, userId));
 
-    revalidatePath("/shop");
-    revalidatePath("/learn");
-    revalidatePath("/quests");
-    revalidatePath("/leaderboard");
-    revalidatePath('/lesson/${lessonId}');
+    await Promise.all([
+        revalidatePath("/shop"),
+        revalidatePath("/learn"),
+        revalidatePath("/quests"),
+        revalidatePath("/leaderboard"),
+        revalidatePath(`/lesson/${lessonId}`),
+    ]);
 };
 export const refillHearts = async () => {
     const currentUserProgress = await getUserProgress();

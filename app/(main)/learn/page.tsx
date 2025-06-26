@@ -4,7 +4,13 @@ import { StickyWrapper } from "components/sticky-wrapper";
 import { UserProgress } from "components/user-progress";
 import { Header } from "./header";
 
-import { getUserProgress, getUnits, getLessonPercentage, getUserProgressWithActiveLesson, getCourseProgress } from "db/queries";
+import {
+    getCourseProgress,
+    getLessonPercentage,
+    getUnits,
+    getUserProgress,
+    getUserSubscription,
+} from "db/queries";
 
 import { Unit } from "./unit";
 
@@ -32,6 +38,23 @@ const LearnPage = async () => {
         return;
     }
 
+    // Process lessons to set locked property for unlocking next lesson
+    const processedUnits = units.map((unit: any) => {
+        let foundFirstIncomplete = false;
+        const processedLessons = unit.lessons.map((lesson: any) => {
+            if (foundFirstIncomplete) {
+                // Lock all lessons after the first incomplete one
+                return { ...lesson, locked: true };
+            }
+            if (!lesson.completed) {
+                foundFirstIncomplete = true;
+            }
+            // Unlock this lesson
+            return { ...lesson, locked: false };
+        });
+        return { ...unit, lessons: processedLessons };
+    });
+
     return (
         <div className="flex flex-row-reverse gap-[48px] px-6">
             <StickyWrapper>
@@ -44,7 +67,7 @@ const LearnPage = async () => {
             </StickyWrapper>
             <FeedWrapper>
                 <Header title={userProgress.activeCourse.title} />
-                {units.map((unit: any) => (
+                {processedUnits.map((unit: any) => (
                     <div key={unit.id} className="mb-10">
                         <Unit
                             id={unit.id}
