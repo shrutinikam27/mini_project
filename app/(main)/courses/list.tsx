@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 import { courses, userProgress } from "../../../db/schema";
 import Card from "../../lesson/card";
@@ -16,8 +17,13 @@ type Props = {
 export const List = ({ courses, activeCourseId }: Props) => {
     const router = useRouter();
     const [pending, startTransition] = useTransition();
+    const { isSignedIn } = useUser();
 
     const onClick = (id: number) => {
+        if (!isSignedIn) {
+            toast.error("Please sign in to select a course.");
+            return;
+        }
         if (id === activeCourseId) {
             return router.push("/learn");
         }
@@ -46,4 +52,3 @@ export const List = ({ courses, activeCourseId }: Props) => {
         </div>
     );
 };
-
