@@ -1,7 +1,9 @@
-import { getIsAdmin } from "lib/admin"; // ensure the file exists at src/lib/admin.ts
-import db from "db/drizzle";
-import { challengeOptions } from "db/schema";
+// ensure the file exists at src/lib/admin.ts
+
+import { challengeOptions } from "/db/schema";
 import { type NextRequest, NextResponse } from "next/server";
+import db from "db/drizzle";
+import { getIsAdmin } from "lib/admin";
 
 export const GET = async () => {
   try {
