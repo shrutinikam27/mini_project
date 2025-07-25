@@ -1,8 +1,9 @@
-import { auth } from "@clerk/nextjs";
+import type { NextRequest } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
 
-export const getIsAdmin = async () => {
+export const getIsAdmin = async (req: NextRequest) => {
   try {
-    const { userId } = await auth();
+    const { userId } = getAuth(req);
 
     if (!userId) return false;
 
