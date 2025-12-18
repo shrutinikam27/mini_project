@@ -17,13 +17,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "baseUrl": ".", // ⭐ REQUIRED FOR PATH ALIASES
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "*": [
+      "@/*": [
         "./*"
       ],
       "actions/*": [
