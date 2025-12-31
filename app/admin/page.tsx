@@ -1,18 +1,11 @@
-"use client";
+export const dynamic = 'force-dynamic'
 
-import { getIsAdmin } from "lib/admin";
-import dynamic from "next/dynamic";
+import { isAdmin } from '@/lib/admin'
 
-const App = dynamic(() => import("./app"), { ssr: false });
+export default async function AdminPage() {
+    const allowed = await isAdmin()
 
-const AdminPage = () => {
-    if (!getIsAdmin) {
-        redirect("/")
-    }
-    return (
-        <App />
-    );
-}; 
+    if (!allowed) return <div>Access Denied</div>
 
-
-export default AdminPage;    
+    return <div>Admin Dashboard</div>
+}
