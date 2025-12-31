@@ -1,15 +1,15 @@
 // ensure the file exists at src/lib/admin.ts
 
-import { challengeOptions } from "/db/schema";
+import { challengeOptions } from "@/db/schema";
 import { type NextRequest, NextResponse } from "next/server";
-import db from "db/drizzle";
-import { getIsAdmin } from "lib/admin";
+import db from "@/db/drizzle";
+import { isAdmin } from "@/lib/admin";
 
 export const GET = async () => {
   try {
-    const isAdmin = await getIsAdmin(); // ✅ must be async
+    const adminCheck = await isAdmin(); // ✅ must be async
 
-    if (!isAdmin) {
+    if (!adminCheck) {
       return new NextResponse("Unauthorized.", { status: 401 });
     }
 
@@ -24,9 +24,9 @@ export const GET = async () => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const isAdmin = await getIsAdmin();
+    const adminCheck = await isAdmin();
 
-    if (!isAdmin) {
+    if (!adminCheck) {
       return new NextResponse("Unauthorized.", { status: 401 });
     }
 
