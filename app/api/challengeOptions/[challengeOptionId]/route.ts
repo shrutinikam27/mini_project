@@ -6,10 +6,11 @@ import { challengeOptions } from "@/db/schema";
 
 export const GET = async (
   _req: NextRequest,
-  { params }: { params: { challengeOptionId: number } }
+  { params }: { params: Promise<{ challengeOptionId: number }> }
 ) => {
+  const { challengeOptionId } = await params;
   const data = await db.query.challengeOptions.findFirst({
-    where: eq(challengeOptions.id, params.challengeOptionId),
+    where: eq(challengeOptions.id, challengeOptionId),
   });
 
   return NextResponse.json(data);
@@ -33,11 +34,12 @@ export const PUT = async (
 
 export const DELETE = async (
   _req: NextRequest,
-  { params }: { params: { challengeOptionId: number } }
+  { params }: { params: Promise<{ challengeOptionId: number }> }
 ) => {
+  const { challengeOptionId } = await params;
   const data = await db
     .delete(challengeOptions)
-    .where(eq(challengeOptions.id, params.challengeOptionId))
+    .where(eq(challengeOptions.id, challengeOptionId))
     .returning();
 
   return NextResponse.json(data[0]);

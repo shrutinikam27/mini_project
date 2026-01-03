@@ -2,7 +2,7 @@ import { Footer } from "./footer";
 import { Header } from "./header";
 
 type Props = {
-    childern: React.ReactNode;
+    children: React.ReactNode;
 }
 
 

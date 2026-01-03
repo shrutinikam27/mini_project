@@ -17,15 +17,16 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { unitId: number } }
+  { params }: { params: Promise<{ unitId: number }> }
 ) => {
+  const { unitId } = await params;
   const body = (await req.json()) as typeof units.$inferSelect;
   const data = await db
     .update(units)
     .set({
       ...body,
     })
-    .where(eq(units.id, params.unitId))
+    .where(eq(units.id, unitId))
     .returning();
 
   return NextResponse.json(data[0]);
@@ -33,11 +34,12 @@ export const PUT = async (
 
 export const DELETE = async (
   _req: NextRequest,
-  { params }: { params: { unitId: number } }
+  { params }: { params: Promise<{ unitId: number }> }
 ) => {
+  const { unitId } = await params;
   const data = await db
     .delete(units)
-    .where(eq(units.id, params.unitId))
+    .where(eq(units.id, unitId))
     .returning();
 
   return NextResponse.json(data[0]);
