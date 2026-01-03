@@ -1,18 +1,9 @@
-// ensure the file exists at src/lib/admin.ts
-
 import { challengeOptions } from "@/db/schema";
 import { type NextRequest, NextResponse } from "next/server";
 import db from "@/db/drizzle";
-import { isAdmin } from "@/lib/admin";
 
 export const GET = async () => {
   try {
-    const adminCheck = await isAdmin(); // ✅ must be async
-
-    if (!adminCheck) {
-      return new NextResponse("Unauthorized.", { status: 401 });
-    }
-
     const data = await db.query.challengeOptions.findMany();
 
     return NextResponse.json(data);
@@ -24,12 +15,6 @@ export const GET = async () => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const adminCheck = await isAdmin();
-
-    if (!adminCheck) {
-      return new NextResponse("Unauthorized.", { status: 401 });
-    }
-
     const body = (await req.json()) as typeof challengeOptions.$inferInsert; // Prefer $inferInsert for POST
 
     const data = await db

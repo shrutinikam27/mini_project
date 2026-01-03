@@ -3,15 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import db from "@/db/drizzle";
 import { challengeOptions } from "@/db/schema";
-import { isAdmin } from "@/lib/admin";
 
 export const GET = async (
   _req: NextRequest,
   { params }: { params: { challengeOptionId: number } }
 ) => {
-  const adminCheck = await isAdmin();
-  if (!adminCheck) return new NextResponse("Unauthorized.", { status: 401 });
-
   const data = await db.query.challengeOptions.findFirst({
     where: eq(challengeOptions.id, params.challengeOptionId),
   });
@@ -23,9 +19,6 @@ export const PUT = async (
   req: NextRequest,
   { params }: { params: { challengeOptionId: number } }
 ) => {
-  const adminCheck = await isAdmin();
-  if (!adminCheck) return new NextResponse("Unauthorized.", { status: 401 });
-
   const body = (await req.json()) as typeof challengeOptions.$inferSelect;
   const data = await db
     .update(challengeOptions)
@@ -42,9 +35,6 @@ export const DELETE = async (
   _req: NextRequest,
   { params }: { params: { challengeOptionId: number } }
 ) => {
-  const adminCheck = await isAdmin();
-  if (!adminCheck) return new NextResponse("Unauthorized.", { status: 401 });
-
   const data = await db
     .delete(challengeOptions)
     .where(eq(challengeOptions.id, params.challengeOptionId))
