@@ -35,11 +35,12 @@ export const PUT = async (
 
 export const DELETE = async (
   _req: NextRequest,
-  { params }: { params: { challengeId: number } }
+  { params }: { params: Promise<{ challengeId: number }> }
 ) => {
+  const { challengeId } = await params;
   const data = await db
     .delete(challenges)
-    .where(eq(challenges.id, params.challengeId))
+    .where(eq(challenges.id, challengeId))
     .returning();
 
   return NextResponse.json(data[0]);

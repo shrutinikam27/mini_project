@@ -6,10 +6,11 @@ import { units } from "@/db/schema";
 
 export const GET = async (
   _req: NextRequest,
-  { params }: { params: { unitId: number } }
+  { params }: { params: Promise<{ unitId: number }> }
 ) => {
+  const { unitId } = await params;
   const data = await db.query.units.findFirst({
-    where: eq(units.id, params.unitId),
+    where: eq(units.id, unitId),
   });
 
   return NextResponse.json(data);

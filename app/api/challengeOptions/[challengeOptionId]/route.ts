@@ -18,15 +18,16 @@ export const GET = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: { challengeOptionId: number } }
+  { params }: { params: Promise<{ challengeOptionId: number }> }
 ) => {
+  const { challengeOptionId } = await params;
   const body = (await req.json()) as typeof challengeOptions.$inferSelect;
   const data = await db
     .update(challengeOptions)
     .set({
       ...body,
     })
-    .where(eq(challengeOptions.id, params.challengeOptionId))
+    .where(eq(challengeOptions.id, challengeOptionId))
     .returning();
 
   return NextResponse.json(data[0]);
