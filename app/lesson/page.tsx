@@ -1,4 +1,6 @@
+export const dynamic = "force-dynamic";
 import { getLesson, getUserProgress, getUserSubscription } from "db/queries";
+
 import { redirect } from "next/navigation";
 import LessonPageClient from "./LessonPageClient";
 

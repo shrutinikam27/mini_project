@@ -1,4 +1,6 @@
+export const dynamic = "force-dynamic";
 import Image from "next/image";
+
 import { redirect } from "next/navigation";
 
 import { FeedWrapper } from "components/feed-wrapper";

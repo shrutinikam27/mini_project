@@ -1,4 +1,6 @@
+export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
+
 import { FeedWrapper } from "components/feed-wrapper";
 import { StickyWrapper } from "components/sticky-wrapper";
 import { UserProgress } from "components/user-progress";

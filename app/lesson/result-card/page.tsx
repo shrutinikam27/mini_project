@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ResultCard } from "../result-card";
 import Image from "next/image";
 
-const ResultCardPage = () => {
+const ResultCardContent = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -38,6 +38,14 @@ const ResultCardPage = () => {
                 Go to Courses
             </button>
         </div>
+    );
+};
+
+const ResultCardPage = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ResultCardContent />
+        </Suspense>
     );
 };
 
