@@ -1,0 +1,54 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+
+import { courses, userProgress } from "../../../db/schema";
+import Card from "../../lesson/card";
+import { useTransition } from "react";
+import { upsertUserProgress } from "actions/user-progress";
+import { toast } from "sonner";
+
+type Props = {
+    courses: typeof courses.$inferSelect[];
+    activeCourseId?: typeof userProgress.$inferSelect.activeCourseId;
+};
+
+export const List = ({ courses, activeCourseId }: Props) => {
+    const router = useRouter();
+    const [pending, startTransition] = useTransition();
+    const { isSignedIn } = useUser();
+
+    const onClick = (id: number) => {
+        if (!isSignedIn) {
+            toast.error("Please sign in to select a course.");
+            return;
+        }
+        if (id === activeCourseId) {
+            return router.push("/learn");
+        }
+        startTransition(() => {
+            upsertUserProgress(id)
+                .then(() => router.push(`/learn/${id}`))
+                .catch(() => toast.error("Something went wrong."));
+        });
+    };
+
+    return (
+        <div className="pt-6 grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4">
+            {courses.map((course) => (
+                <Card
+                    key={course.id}
+                    id={course.id}
+                    title={course.title}
+                    text={""}
+                    type={"SELECT"}
+                    imageSrc={course.imageSrc && course.imageSrc.trim() !== "" ? course.imageSrc : null}
+                    onClick={() => onClick(course.id)}
+                    disabled={pending}
+                    active={course.id === activeCourseId}
+                />
+            ))}
+        </div>
+    );
+};

@@ -1,0 +1,58 @@
+"use client";
+import { lessons, units } from "db/schema";
+import { LessonButton } from "./lesson-button";
+import { UnitBanner } from "./unit-banner";
+
+type Props = {
+    id: number;
+    order: number;
+    title: string;
+    description: string;
+    lessons: (typeof lessons.$inferSelect & {
+        completed: boolean;
+        locked?: boolean;
+    })[];
+    activeLesson: (typeof lessons.$inferSelect & {
+        unit: typeof units.$inferSelect;
+    }) | undefined;
+    activeLessonPercentage: number;
+};
+
+export const Unit = ({
+    id,
+    order,
+    title,
+    description,
+    lessons,
+    activeLesson,
+    activeLessonPercentage,
+}: Props) => {
+    console.log("Unit component lessons with locked state:", JSON.stringify(lessons, null, 2));
+    return (
+        <>
+            <UnitBanner title={title} description={description} />
+
+            <div className="flex items-center flex-col relative">
+                {lessons.map((lesson, index) => {
+                    const isCurrent = lesson.id === activeLesson?.id;
+                    // Use locked property from lesson if available, fallback to previous logic
+                    const isLocked = lesson.locked !== undefined ? lesson.locked : (!lesson.completed && !isCurrent);
+
+                    return (
+                        <LessonButton
+                            key={lesson.id}
+                            id={lesson.id}
+                            index={index}
+                            totalCount={lessons.length - 1}
+                            current={isCurrent}
+                            locked={isLocked}
+                            percentage={activeLessonPercentage}
+                            completed={lesson.completed}
+                        />
+
+                    );
+                })}
+            </div>
+        </>
+    );
+};
